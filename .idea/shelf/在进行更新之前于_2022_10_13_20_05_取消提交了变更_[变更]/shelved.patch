@@ -1,0 +1,129 @@
+Index: LinkList/main.go
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/LinkList/main.go b/LinkList/simpleLinklist/main.go
+rename from LinkList/main.go
+rename to LinkList/simpleLinklist/main.go
+--- a/LinkList/main.go	(revision 2e5f09d72a25aa44f528ad2ddc2780f09e8f6560)
++++ b/LinkList/simpleLinklist/main.go	(date 1665662627070)
+@@ -1,16 +1,16 @@
+-package main
++package simpleLinklist
+ 
+-type linklist interface {
+-	Reverse(k int)
+-	Length() int
+-	IsEmpty() bool
+-	InsertFromHead(data interface{}) *LinkList
+-	InsertFromTail(data interface{}) *LinkList
+-	InsertByIndex(index int, data interface{}) *LinkList
+-	Delete(data interface{}) *LinkList
+-	DeleteAtIndex(index int) bool
+-	Contain(data interface{}) bool
+-}
++//type linklist interface {
++//	Reverse(k int)
++//	Length() int
++//	IsEmpty() bool
++//	InsertFromHead(data interface{}) *LinkList
++//	InsertFromTail(data interface{}) *LinkList
++//	InsertByIndex(index int, data interface{}) *LinkList
++//	Delete(data interface{}) *LinkList
++//	DeleteAtIndex(index int) bool
++//	Contain(data interface{}) bool
++//}
+ 
+ type Node struct {
+ 	Value interface{}
+Index: PriorityQueue/main.go
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package main\r\n\r\nimport \"container/heap\"\r\n\r\n//优先级队列要实现Len(), Less(), Swap()三个方法\r\n\r\n//struct队列\r\ntype PriorityQueue []*Node\r\ntype Node struct {\r\n\tPriority int    //队列的优先级\r\n\tValue    string //值\r\n\tindex    int\r\n}\r\n\r\nfunc (pq PriorityQueue) Len() int {\r\n\treturn len(pq)\r\n}\r\n\r\n//按照优先级排序\r\nfunc (pq PriorityQueue) Less(i, j int) bool {\r\n\treturn pq[i].Priority > pq[j].Priority\r\n}\r\n\r\n//交换次序\r\nfunc (pq PriorityQueue) Swap(i, j int) {\r\n\tpq[i], pq[j] = pq[j], pq[i]\r\n\tpq[i].index = i\r\n\tpq[j].index = j\r\n}\r\nfunc (pq *PriorityQueue) Push(x interface{}) {\r\n\tn := len(*pq)\r\n\titem := x.(*Node)\r\n\titem.index = n\r\n\t*pq = append(*pq, item)\r\n}\r\nfunc (pq *PriorityQueue) Pop() interface{} {\r\n\told := *pq\r\n\tn := len(old)\r\n\titem := old[n-1]\r\n\titem.index = -1\r\n\t*pq = old[:n-1]\r\n\treturn item\r\n}\r\n\r\nfunc (pq *PriorityQueue) Update(item *Node, value string, priority int) {\r\n\titem.Value = value\r\n\titem.Priority = priority\r\n\t//Fix在索引i处的元素更新后重新建立堆排序\r\n\theap.Fix(pq, item.index)\r\n}\r\n\r\n//数组实现\r\ntype IntHeap []int\r\n\r\nfunc (h IntHeap) Len() int {\r\n\treturn len(h)\r\n}\r\nfunc (h IntHeap) Less(i, j int) bool {\r\n\treturn h[i] < h[j]\r\n}\r\nfunc (h IntHeap) Swap(i, j int) {\r\n\th[i], h[j] = h[j], h[i]\r\n}\r\n\r\nfunc (h *IntHeap) Push(x interface{}) {\r\n\t*h = append(*h, x.(int))\r\n}\r\nfunc (h *IntHeap) Pop() interface{} {\r\n\told := *h\r\n\tn := len(old)\r\n\tx := old[n-1]\r\n\t*h = old[:n-1]\r\n\treturn x\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/PriorityQueue/main.go b/PriorityQueue/main.go
+--- a/PriorityQueue/main.go	(revision 2e5f09d72a25aa44f528ad2ddc2780f09e8f6560)
++++ b/PriorityQueue/main.go	(date 1665544996643)
+@@ -1,6 +1,8 @@
+ package main
+ 
+-import "container/heap"
++import (
++	"container/heap"
++)
+ 
+ //优先级队列要实现Len(), Less(), Swap()三个方法
+ 
+Index: go.mod
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>module Data_Struct\r\n\r\ngo 1.18\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/go.mod b/go.mod
+--- a/go.mod	(revision 2e5f09d72a25aa44f528ad2ddc2780f09e8f6560)
++++ b/go.mod	(date 1665631398730)
+@@ -1,3 +1,5 @@
+ module Data_Struct
+ 
+ go 1.18
++
++require github.com/cheekybits/genny v1.0.0
+Index: Heap/minheap/minheap.go
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package minheap\r\n\r\nimport \"math\"\r\n\r\n//堆节点\r\ntype Heap struct {\r\n\tSize     int\r\n\tCapacity int\r\n\tNode     []interface{} //存储堆元素\r\n}\r\n\r\n//实现小顶堆\r\ntype MinHeap Heap\r\n\r\n//创建堆\r\nfunc (h Heap) Init(n int) MinHeap {\r\n\theap := MinHeap{\r\n\t\tSize:     0,\r\n\t\tCapacity: n,\r\n\t\tNode:     make([]interface{}, n+1),\r\n\t}\r\n\t//定义哨兵为最小值\r\n\theap.Node[0] = math.MinInt\r\n\treturn heap\r\n}\r\n\r\nfunc (m *MinHeap) IsFull() bool {\r\n\treturn m.Size >= m.Capacity\r\n}\r\n\r\nfunc (m *MinHeap) IsEmpty() bool {\r\n\treturn m.Size == 0\r\n}\r\n\r\n//最小堆插入元素\r\nfunc (m *MinHeap) Insert(item interface{}) {\r\n\tif m.IsFull() {\r\n\t\tpanic(\"MinHeap Is Full\")\r\n\t}\r\n\tm.Size++\r\n\ti := m.Size //i指向插入后堆中最后一个元素\r\n\t//如果插入元素比父节点小，那就与父节点换位\r\n\t//i>1是因为Node[0]是哨兵位置，已经超出了堆的范围\r\n\tfor ; m.Node[i/2].(int) > item.(int) /* && i > 1*/ ; i /= 2 {\r\n\t\tm.Node[i] = m.Node[i/2]\r\n\t}\r\n\tm.Node[i] = item\r\n}\r\n\r\n// DeleteMin 最小堆删除元素,取出根节点(最大值)，然后删除堆的一个节点\r\nfunc (m *MinHeap) DeleteMin() interface{} {\r\n\tif m.IsEmpty() {\r\n\t\tpanic(\"MinHeap Is Empty\")\r\n\t}\r\n\tmin := m.Node[1] //取出根节点最大值\r\n\t//用最大堆中最后一个元素从根节点开始向上过滤下层节点\r\n\ttmp := m.Node[m.Size-1]\r\n\tvar parent, child int\r\n\tfor parent = 1; parent*2 <= m.Size; parent = child {\r\n\t\tchild = parent * 2\r\n\t\tif child != m.Size && m.Node[child].(int) > m.Node[child+1].(int) {\r\n\t\t\tchild++ //child指向左右子树较大者\r\n\t\t}\r\n\t\tif tmp.(int) <= m.Node[child].(int) {\r\n\t\t\tbreak\r\n\t\t} else {\r\n\t\t\t//移动tmp元素到下一层\r\n\t\t\tm.Node[parent] = m.Node[child]\r\n\t\t}\r\n\t}\r\n\tm.Node[parent] = tmp\r\n\tm.Size--\r\n\treturn min\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Heap/minheap/minheap.go b/Heap/minheap/minheap.go
+--- a/Heap/minheap/minheap.go	(revision 2e5f09d72a25aa44f528ad2ddc2780f09e8f6560)
++++ b/Heap/minheap/minheap.go	(date 1665555771671)
+@@ -1,6 +1,9 @@
+-package minheap
++package main
+ 
+-import "math"
++import (
++	"fmt"
++	"math"
++)
+ 
+ //堆节点
+ type Heap struct {
+@@ -13,13 +16,13 @@
+ type MinHeap Heap
+ 
+ //创建堆
+-func (h Heap) Init(n int) MinHeap {
++func (m MinHeap) Init(n int) MinHeap {
+ 	heap := MinHeap{
+ 		Size:     0,
+ 		Capacity: n,
+ 		Node:     make([]interface{}, n+1),
+ 	}
+-	//定义哨兵为最小值
++	//定义哨兵为最小值,我们存放数据是从下标1开始存放的
+ 	heap.Node[0] = math.MinInt
+ 	return heap
+ }
+@@ -72,3 +75,14 @@
+ 	m.Size--
+ 	return min
+ }
++
++func main() {
++	h := MinHeap{}
++	h = h.Init(10)
++	h.Insert(1)
++	h.Insert(4)
++	h.Insert(10)
++	h.Insert(30)
++	fmt.Println(h.Node)
++	
++}
+\ No newline at end of file
